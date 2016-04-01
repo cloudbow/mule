@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -85,6 +87,12 @@ public class StaticResourceMessageProcessor implements MessageProcessor, Initial
         {
             // Remove the contextPath from the endpoint from the request as this isn't part of the path.
             path = path.substring(contextPath.length());
+            try {
+               path = URLDecoder.decode(path,"UTF-8");
+            }
+            catch (UnsupportedEncodingException e) {
+               throw new ResourceNotFoundException(HttpMessages.fileNotFound(resourceBase + path),event);
+            }
         }
 
         File file = new File(resourceBase + path);
